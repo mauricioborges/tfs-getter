@@ -9,13 +9,11 @@ package com.github.mauricioborges;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetEvent;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetListener;
 
-public class SampleGetEventListener
-    implements GetListener
-{
-    public void onGet(final GetEvent e)
-    {
+public class GetEventListener extends Loggable
+        implements GetListener {
+    public void onGet(final GetEvent e) {
         String item = e.getTargetLocalItem() != null ? e.getTargetLocalItem() : e.getServerItem();
 
-        System.out.println("getting: " + item);
+        log.debug("getting: " + item);
     }
 }

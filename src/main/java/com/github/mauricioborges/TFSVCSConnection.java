@@ -11,7 +11,7 @@ import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.Workspace;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TFSVCSConnection extends Loggable implements VCSConnection  {
+public class TFSVCSConnection extends Loggable implements VCSConnection {
 
 
     private TFSTeamProjectCollection tpc;
@@ -23,7 +23,7 @@ public class TFSVCSConnection extends Loggable implements VCSConnection  {
 
     @Override
     public Repository toRepositoryRoot(String rootPath) {
-        if (tpc==null){
+        if (tpc == null) {
             throw new WrongUsageException();
         }
         Workspace workspace = createAndMapWorkspace(rootPath);
@@ -60,11 +60,11 @@ public class TFSVCSConnection extends Loggable implements VCSConnection  {
 
     @Override
     public void close() {
-        for (Workspace workspace : workspaces){
-            try{
+        for (Workspace workspace : workspaces) {
+            try {
                 tpc.getVersionControlClient().deleteWorkspace(workspace);
                 log.info("Deleted the workspace");
-            }catch(WorkspaceNotFoundException e){
+            } catch (WorkspaceNotFoundException e) {
                 log.info("Cannot delete the workspace " + workspace.getDisplayName() + ", probably was deleted before. Ignoring ...");
             }
         }

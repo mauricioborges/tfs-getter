@@ -11,24 +11,18 @@ import com.microsoft.tfs.core.clients.versioncontrol.events.OperationStartedEven
 import com.microsoft.tfs.core.clients.versioncontrol.events.OperationStartedListener;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
 
-public class SampleGetOperationStartedListener
-    implements OperationStartedListener
-{
-    public void onGetOperationStarted(final GetOperationStartedEvent e)
-    {
-        for (GetRequest request : e.getRequests())
-        {
-            if (request.getItemSpec() != null)
-            {
-                System.out.println("Started getting: " + request.getItemSpec().toString());
+public class GetOperationStartedListener extends Loggable
+        implements OperationStartedListener {
+    public void onGetOperationStarted(final GetOperationStartedEvent e) {
+        for (GetRequest request : e.getRequests()) {
+            if (request.getItemSpec() != null) {
+                log.debug("Started getting: " + request.getItemSpec().toString());
             }
         }
     }
 
-    public void onOperationStarted(final OperationStartedEvent e)
-    {
-        if (e instanceof GetOperationStartedEvent)
-        {
+    public void onOperationStarted(final OperationStartedEvent e) {
+        if (e instanceof GetOperationStartedEvent) {
             onGetOperationStarted((GetOperationStartedEvent) e);
         }
     }

@@ -17,15 +17,15 @@ public class TFSRepository extends Loggable implements Repository {
     private final String rootPath;
     private TFSTeamProjectCollection tpc;
 
-    public TFSRepository(Workspace workspace, String rootPath,TFSTeamProjectCollection tpc) {
-        this.tpc=tpc;
+    public TFSRepository(Workspace workspace, String rootPath, TFSTeamProjectCollection tpc) {
+        this.tpc = tpc;
         this.workspace = workspace;
         this.rootPath = rootPath;
     }
 
     @Override
     public FileInputStream getFile(String filePath) {
-        if (workspace==null){
+        if (workspace == null) {
             throw new WrongUsageException();
         }
 
@@ -44,22 +44,23 @@ public class TFSRepository extends Loggable implements Repository {
             this.close();
         }
     }
+
     private void addGetEventListeners() {
         // Adding a get operation started event listener, this is fired once per
         // get call
-        SampleGetOperationStartedListener getOperationStartedListener = new SampleGetOperationStartedListener();
+        GetOperationStartedListener getOperationStartedListener = new GetOperationStartedListener();
         tpc.getVersionControlClient().getEventEngine()
                 .addOperationStartedListener(getOperationStartedListener);
 
         // Adding a get event listener, this fired once per get operation(which
         // might be multiple times per get call)
-        SampleGetEventListener getListener = new SampleGetEventListener();
+        GetEventListener getListener = new GetEventListener();
         tpc.getVersionControlClient().getEventEngine()
                 .addGetListener(getListener);
 
         // Adding a get operation completed event listener, this is fired once
         // per get call
-        SampleGetOperationCompletedListener getOperationCompletedListener = new SampleGetOperationCompletedListener();
+        GetOperationCompletedListener getOperationCompletedListener = new GetOperationCompletedListener();
         tpc.getVersionControlClient().getEventEngine()
                 .addOperationCompletedListener(getOperationCompletedListener);
     }

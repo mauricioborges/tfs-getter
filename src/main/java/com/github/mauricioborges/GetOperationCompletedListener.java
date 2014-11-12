@@ -11,24 +11,18 @@ import com.microsoft.tfs.core.clients.versioncontrol.events.OperationCompletedEv
 import com.microsoft.tfs.core.clients.versioncontrol.events.OperationCompletedListener;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
 
-public class SampleGetOperationCompletedListener
-    implements OperationCompletedListener
-{
-    public void onGetOperationCompleted(final GetOperationCompletedEvent e)
-    {
-        for (GetRequest request : e.getRequests())
-        {
-            if (request.getItemSpec() != null)
-            {
-                System.out.println("Completed getting: " + request.getItemSpec().toString());
+public class GetOperationCompletedListener extends Loggable
+        implements OperationCompletedListener {
+    public void onGetOperationCompleted(final GetOperationCompletedEvent e) {
+        for (GetRequest request : e.getRequests()) {
+            if (request.getItemSpec() != null) {
+                log.debug("Completed getting: " + request.getItemSpec().toString());
             }
         }
     }
 
-    public void onOperationCompleted(final OperationCompletedEvent e)
-    {
-        if (e instanceof GetOperationCompletedEvent)
-        {
+    public void onOperationCompleted(final OperationCompletedEvent e) {
+        if (e instanceof GetOperationCompletedEvent) {
             onGetOperationCompleted((GetOperationCompletedEvent) e);
         }
     }

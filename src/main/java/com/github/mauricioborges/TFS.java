@@ -27,7 +27,7 @@ public class TFS extends Loggable {
     }
 
     public TFS as(String user) {
-        if (this.server==null){
+        if (this.server == null) {
             throw new WrongUsageException();
         }
         this.user = user;
@@ -35,7 +35,7 @@ public class TFS extends Loggable {
     }
 
     public TFS with(String password) {
-        if (user==null){
+        if (user == null) {
             throw new WrongUsageException();
         }
         System.setProperty(
@@ -46,37 +46,29 @@ public class TFS extends Loggable {
         return this;
     }
 
-    public VCSConnection getConnection(){
-        if (this.tpc==null){
+    public VCSConnection getConnection() {
+        if (this.tpc == null) {
             throw new WrongUsageException();
         }
         return new TFSVCSConnection(this.tpc);
     }
 
 
-    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl)
-    {
+    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl) {
         TFSTeamProjectCollection tpc = null;
         Credentials credentials;
 
-        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials())
-        {
+        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
             credentials = new DefaultNTCredentials();
-        }
-        else
-        {
+        } else {
             credentials = new UsernamePasswordCredentials(username, password);
         }
         URI httpProxyURI = null;
 
-        if (proxyUrl != null && proxyUrl.length() > 0)
-        {
-            try
-            {
+        if (proxyUrl != null && proxyUrl.length() > 0) {
+            try {
                 httpProxyURI = new URI(proxyUrl);
-            }
-            catch (URISyntaxException e)
-            {
+            } catch (URISyntaxException e) {
                 // Do Nothing
             }
         }
