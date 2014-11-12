@@ -1,4 +1,4 @@
-package com.github.mauricioborges;
+package com.github.mauricioborges.model;
 
 public interface Closable {
 

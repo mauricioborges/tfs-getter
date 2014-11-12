@@ -1,5 +1,11 @@
 package com.github.mauricioborges;
 
+import com.github.mauricioborges.model.Repository;
+import com.github.mauricioborges.model.VCSConnection;
+import com.github.mauricioborges.model.exception.WrongUsageException;
+import com.github.mauricioborges.tfs.model.TFS;
+import com.github.mauricioborges.tfs.model.TFSRepository;
+import com.github.mauricioborges.tfs.model.TFSVCSConnection;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,13 +20,12 @@ import static org.junit.Assert.assertNull;
 
 public class TestSpecification {
 
-    @Rule
-    public ExpectedException exception=ExpectedException.none();
     private static Properties properties;
-
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
 
     @BeforeClass
-    public static void loadRealProperties(){
+    public static void loadRealProperties() {
         properties = new Properties();
         try {
 
@@ -42,8 +47,8 @@ public class TestSpecification {
         assertNotNull(fileInputStream);
         printLinesFromFile(fileInputStream);
         connection.close();
-        long elapsedTimeMillis = System.currentTimeMillis()-start;
-        float elapsedTimeSec = elapsedTimeMillis/1000F;
+        long elapsedTimeMillis = System.currentTimeMillis() - start;
+        float elapsedTimeSec = elapsedTimeMillis / 1000F;
         System.out.println(elapsedTimeMillis);
         System.out.println(elapsedTimeSec);
     }
@@ -52,7 +57,7 @@ public class TestSpecification {
         BufferedReader reader = new BufferedReader(new InputStreamReader(fileInputStream, Charset.forName("ISO-8859-1")));
         String line = null;
         line = reader.readLine();
-        while(line != null){
+        while (line != null) {
             //System.out.println(line);
             line = reader.readLine();
         }
@@ -65,21 +70,21 @@ public class TestSpecification {
     }
 
     @Test
-    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPassword(){
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPassword() {
         exception.expect(WrongUsageException.class);
         assertNull(new TFS().with("x"));
     }
 
     @Test
-    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPath(){
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPath() {
         exception.expect(WrongUsageException.class);
         assertNull(new TFSVCSConnection(null).toRepositoryRoot(""));
     }
 
     @Test
-    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithFileName(){
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithFileName() {
         exception.expect(WrongUsageException.class);
-        assertNull(new TFSRepository(null, null,null).getFile("a"));
+        assertNull(new TFSRepository(null, null, null).getFile("a"));
     }
 
 

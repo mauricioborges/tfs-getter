@@ -1,4 +1,4 @@
-package com.github.mauricioborges;
+package com.github.mauricioborges.tfs.model;
 
 public class CannotAccessRepositoryException extends RuntimeException {
 }

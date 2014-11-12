@@ -1,5 +1,9 @@
-package com.github.mauricioborges;
+package com.github.mauricioborges.tfs.model;
 
+import com.github.mauricioborges.model.Loggable;
+import com.github.mauricioborges.model.Repository;
+import com.github.mauricioborges.model.VCSConnection;
+import com.github.mauricioborges.model.exception.WrongUsageException;
 import com.microsoft.tfs.core.TFSTeamProjectCollection;
 import com.microsoft.tfs.core.clients.versioncontrol.WorkspaceLocation;
 import com.microsoft.tfs.core.clients.versioncontrol.WorkspacePermissionProfile;
@@ -38,11 +42,11 @@ public class TFSVCSConnection extends Loggable implements VCSConnection {
                 + System.currentTimeMillis();
         Workspace workspace = null;
         // Get the workspace
-        try{
+        try {
             workspace = tpc.getVersionControlClient().tryGetWorkspace(
                     TFS.MAPPING_LOCAL_PATH);
-        }catch(UnsatisfiedLinkError e){
-            log.error("Cannot access native library at "+System.getProperty(TFS.COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY));
+        } catch (UnsatisfiedLinkError e) {
+            log.error("Cannot access native library at " + System.getProperty(TFS.COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY));
             throw new CannotAccessRepositoryException();
         }
 

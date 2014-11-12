@@ -4,8 +4,9 @@
  * http://opensource.org/licenses/ms-pl.html.)
  */
 
-package com.github.mauricioborges;
+package com.github.mauricioborges.tfs;
 
+import com.github.mauricioborges.model.Loggable;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetEvent;
 import com.microsoft.tfs.core.clients.versioncontrol.events.GetListener;
 

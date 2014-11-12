@@ -1,5 +1,8 @@
-package com.github.mauricioborges;
+package com.github.mauricioborges.tfs.model;
 
+import com.github.mauricioborges.model.Loggable;
+import com.github.mauricioborges.model.VCSConnection;
+import com.github.mauricioborges.model.exception.WrongUsageException;
 import com.microsoft.tfs.core.TFSTeamProjectCollection;
 import com.microsoft.tfs.core.httpclient.Credentials;
 import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
@@ -17,14 +20,35 @@ import java.util.Properties;
 
 public class TFS extends Loggable {
 
-    private static final String NO_PROXY_SERVER = "";
     public static final String COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY = "com.microsoft.tfs.jni.native.base-directory";
+    private static final String NO_PROXY_SERVER = "";
+    public static String MAPPING_LOCAL_PATH = System.getProperty("java.io.tmpdir") + File.pathSeparator + "tfs-mapping" + System.currentTimeMillis();
     private TFSTeamProjectCollection tpc;
     private String server;
     private String user;
 
-    public static String MAPPING_LOCAL_PATH = System.getProperty("java.io.tmpdir") + File.pathSeparator + "tfs-mapping" + System.currentTimeMillis();
+    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl) {
+        TFSTeamProjectCollection tpc = null;
+        Credentials credentials;
 
+        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
+            credentials = new DefaultNTCredentials();
+        } else {
+            credentials = new UsernamePasswordCredentials(username, password);
+        }
+        URI httpProxyURI = null;
+
+        if (proxyUrl != null && proxyUrl.length() > 0) {
+            try {
+                httpProxyURI = new URI(proxyUrl);
+            } catch (URISyntaxException e) {
+                Logger.getLogger(TFS.class).warn("proxy URL invalid");
+            }
+        }
+
+        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials);
+        return tpc;
+    }
 
     public TFS at(String server) {
         this.server = server;
@@ -55,17 +79,17 @@ public class TFS extends Loggable {
         //TODO: extract property loading
         String jniBaseDirectory = null;
         InputStream tfsPropertiesFile = TFS.class.getClassLoader().getResourceAsStream("tfs.properties");
-        if (tfsPropertiesFile==null){
+        if (tfsPropertiesFile == null) {
             setDefaultJniLibsDirectory();
             return;
         }
         try {
             Properties prop = new Properties();
             prop.load(tfsPropertiesFile);
-            jniBaseDirectory=prop.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY);
+            jniBaseDirectory = prop.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY);
 
-            System.setProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY,jniBaseDirectory);
-            if (System.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY)==null){
+            System.setProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY, jniBaseDirectory);
+            if (System.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY) == null) {
                 setDefaultJniLibsDirectory();
             }
         } catch (IOException e) {
@@ -74,7 +98,8 @@ public class TFS extends Loggable {
         }
 
     }
-    private void setDefaultJniLibsDirectory(){
+
+    private void setDefaultJniLibsDirectory() {
         System.setProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY, "native");
 
     }
@@ -85,29 +110,5 @@ public class TFS extends Loggable {
             throw new WrongUsageException();
         }
         return new TFSVCSConnection(this.tpc);
-    }
-
-
-    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl) {
-        TFSTeamProjectCollection tpc = null;
-        Credentials credentials;
-
-        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
-            credentials = new DefaultNTCredentials();
-        } else {
-            credentials = new UsernamePasswordCredentials(username, password);
-        }
-        URI httpProxyURI = null;
-
-        if (proxyUrl != null && proxyUrl.length() > 0) {
-            try {
-                httpProxyURI = new URI(proxyUrl);
-            } catch (URISyntaxException e) {
-                Logger.getLogger(TFS.class).warn("proxy URL invalid");
-            }
-        }
-
-        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials);
-        return tpc;
     }
 }

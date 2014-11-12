@@ -1,5 +1,12 @@
-package com.github.mauricioborges;
+package com.github.mauricioborges.tfs.model;
 
+import com.github.mauricioborges.model.Loggable;
+import com.github.mauricioborges.model.Repository;
+import com.github.mauricioborges.model.exception.CannotGetFileException;
+import com.github.mauricioborges.model.exception.WrongUsageException;
+import com.github.mauricioborges.tfs.GetEventListener;
+import com.github.mauricioborges.tfs.GetOperationCompletedListener;
+import com.github.mauricioborges.tfs.GetOperationStartedListener;
 import com.microsoft.tfs.core.TFSTeamProjectCollection;
 import com.microsoft.tfs.core.clients.versioncontrol.GetOptions;
 import com.microsoft.tfs.core.clients.versioncontrol.soapextensions.GetRequest;
