@@ -1,12 +1,19 @@
 package com.github.mauricioborges;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.Properties;
 
+import static org.junit.Assert.assertNull;
+
 public class TestSpecification {
+
+    @Rule
+    public ExpectedException exception=ExpectedException.none();
 
     @Test
     public void shouldReadRealFile() {
@@ -35,4 +42,27 @@ public class TestSpecification {
         }
     }
 
+    @Test
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithUser() {
+        exception.expect(WrongUsageException.class);
+        assertNull(new TFS().withUser("x"));
+    }
+
+    @Test
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPassword(){
+        exception.expect(WrongUsageException.class);
+        assertNull(new TFS().andPassword("x"));
+    }
+
+    @Test
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithPath(){
+        exception.expect(WrongUsageException.class);
+        assertNull(new TFS().on("x"));
+    }
+
+    @Test
+    public void shouldFailIfTryToUseDifferentBuilderSyntaxWithFileName(){
+        exception.expect(WrongUsageException.class);
+        assertNull(new TFS().get("x"));
+    }
 }

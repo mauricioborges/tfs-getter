@@ -42,11 +42,17 @@ public class TFS {
     }
 
     public TFS withUser(String user) {
+        if (server==null){
+            throw new WrongUsageException();
+        }
         this.user = user;
         return this;
     }
 
     public TFS andPassword(String password) {
+        if (user==null){
+            throw new WrongUsageException();
+        }
         System.setProperty(
                 "com.microsoft.tfs.jni.native.base-directory",
                 "C:\\Users\\mauricio.silva\\Downloads\\TFS-SDK-11.0.0.1306\\TFS-SDK-11.0.0\\redist\\native");
@@ -87,13 +93,18 @@ public class TFS {
     }
 
     public TFS on(String rootPath) {
+        if (tpc==null){
+            throw new WrongUsageException();
+        }
         this.rootPath = rootPath;
         this.workspace = createAndMapWorkspace(rootPath);
         return this;
     }
 
     public FileInputStream get(String filePath) {
-
+        if (workspace==null){
+            throw new WrongUsageException();
+        }
 
         try {
             // Listen to the get event
