@@ -18,6 +18,7 @@ public class TFSVCSConnection extends Loggable implements VCSConnection {
     private List<Workspace> workspaces = new ArrayList<Workspace>();
 
     public TFSVCSConnection(TFSTeamProjectCollection tpc) {
+        //TODO: encapsulate TPC into object, to avoid passing TFS entities around
         this.tpc = tpc;
     }
 
@@ -37,8 +38,13 @@ public class TFSVCSConnection extends Loggable implements VCSConnection {
                 + System.currentTimeMillis();
         Workspace workspace = null;
         // Get the workspace
-        workspace = tpc.getVersionControlClient().tryGetWorkspace(
-                TFS.MAPPING_LOCAL_PATH);
+        try{
+            workspace = tpc.getVersionControlClient().tryGetWorkspace(
+                    TFS.MAPPING_LOCAL_PATH);
+        }catch(UnsatisfiedLinkError e){
+            log.error("Cannot access native library at "+System.getProperty(TFS.COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY));
+            throw new CannotAccessRepositoryException();
+        }
 
         // Create and map the workspace if it does not exist
         if (workspace == null) {
