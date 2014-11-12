@@ -3,7 +3,7 @@ package com.github.mauricioborges;
 import com.github.mauricioborges.model.Repository;
 import com.github.mauricioborges.model.VCSConnection;
 import com.github.mauricioborges.model.exception.WrongUsageException;
-import com.github.mauricioborges.tfs.model.TFS;
+import com.github.mauricioborges.tfs.TFS;
 import com.github.mauricioborges.tfs.model.TFSRepository;
 import com.github.mauricioborges.tfs.model.TFSVCSConnection;
 import org.junit.BeforeClass;
@@ -84,7 +84,7 @@ public class TestSpecification {
     @Test
     public void shouldFailIfTryToUseDifferentBuilderSyntaxWithFileName() {
         exception.expect(WrongUsageException.class);
-        assertNull(new TFSRepository(null, null, null).getFile("a"));
+        assertNull(new TFSRepository(null).getFile("a"));
     }
 
 

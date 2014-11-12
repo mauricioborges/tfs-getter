@@ -1,8 +1,9 @@
-package com.github.mauricioborges.tfs.model;
+package com.github.mauricioborges.tfs;
 
 import com.github.mauricioborges.model.Loggable;
 import com.github.mauricioborges.model.VCSConnection;
 import com.github.mauricioborges.model.exception.WrongUsageException;
+import com.github.mauricioborges.tfs.model.TFSVCSConnection;
 import com.microsoft.tfs.core.TFSTeamProjectCollection;
 import com.microsoft.tfs.core.httpclient.Credentials;
 import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
@@ -26,29 +27,6 @@ public class TFS extends Loggable {
     private TFSTeamProjectCollection tpc;
     private String server;
     private String user;
-
-    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl) {
-        TFSTeamProjectCollection tpc = null;
-        Credentials credentials;
-
-        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
-            credentials = new DefaultNTCredentials();
-        } else {
-            credentials = new UsernamePasswordCredentials(username, password);
-        }
-        URI httpProxyURI = null;
-
-        if (proxyUrl != null && proxyUrl.length() > 0) {
-            try {
-                httpProxyURI = new URI(proxyUrl);
-            } catch (URISyntaxException e) {
-                Logger.getLogger(TFS.class).warn("proxy URL invalid");
-            }
-        }
-
-        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials);
-        return tpc;
-    }
 
     public TFS at(String server) {
         this.server = server;
@@ -104,11 +82,35 @@ public class TFS extends Loggable {
 
     }
 
+    private static TFSTeamProjectCollection connectToTFS(String username, String password, String proxyUrl, String collectionUrl) {
+        TFSTeamProjectCollection tpc = null;
+        Credentials credentials;
+
+        if ((username == null || username.length() == 0) && CredentialsUtils.supportsDefaultCredentials()) {
+            credentials = new DefaultNTCredentials();
+        } else {
+            credentials = new UsernamePasswordCredentials(username, password);
+        }
+        URI httpProxyURI = null;
+
+        if (proxyUrl != null && proxyUrl.length() > 0) {
+            try {
+                httpProxyURI = new URI(proxyUrl);
+            } catch (URISyntaxException e) {
+                Logger.getLogger(TFS.class).warn("proxy URL invalid");
+            }
+        }
+
+        tpc = new TFSTeamProjectCollection(URIUtils.newURI(collectionUrl), credentials);
+        return tpc;
+    }
+
     public VCSConnection getConnection() {
         if (this.tpc == null) {
             log.error("Cannot connect without valid TFSTeamProjectCollection object!");
             throw new WrongUsageException();
         }
-        return new TFSVCSConnection(this.tpc);
+        TFSClient client=new TFSClient(this.tpc);
+        return new TFSVCSConnection(client);
     }
 }
