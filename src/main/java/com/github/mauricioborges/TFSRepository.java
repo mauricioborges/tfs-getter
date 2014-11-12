@@ -26,6 +26,7 @@ public class TFSRepository extends Loggable implements Repository {
     @Override
     public FileInputStream getFile(String filePath) {
         if (workspace == null) {
+            log.error("Cannot get file with no workspace defined!");
             throw new WrongUsageException();
         }
 

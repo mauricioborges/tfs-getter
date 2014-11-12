@@ -24,6 +24,7 @@ public class TFSVCSConnection extends Loggable implements VCSConnection {
     @Override
     public Repository toRepositoryRoot(String rootPath) {
         if (tpc == null) {
+            log.error("Cannot connect without valid TFSTeamProjectCollection object!");
             throw new WrongUsageException();
         }
         Workspace workspace = createAndMapWorkspace(rootPath);
@@ -63,7 +64,7 @@ public class TFSVCSConnection extends Loggable implements VCSConnection {
         for (Workspace workspace : workspaces) {
             try {
                 tpc.getVersionControlClient().deleteWorkspace(workspace);
-                log.info("Deleted the workspace");
+                log.info("Deleted the workspace" + workspace.getDisplayName());
             } catch (WorkspaceNotFoundException e) {
                 log.info("Cannot delete the workspace " + workspace.getDisplayName() + ", probably was deleted before. Ignoring ...");
             }

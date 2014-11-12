@@ -6,6 +6,7 @@ import com.microsoft.tfs.core.httpclient.DefaultNTCredentials;
 import com.microsoft.tfs.core.httpclient.UsernamePasswordCredentials;
 import com.microsoft.tfs.core.util.CredentialsUtils;
 import com.microsoft.tfs.core.util.URIUtils;
+import org.apache.log4j.Logger;
 
 import java.io.File;
 import java.net.URI;
@@ -28,6 +29,7 @@ public class TFS extends Loggable {
 
     public TFS as(String user) {
         if (this.server == null) {
+            log.error("Cannot connect without server defined!");
             throw new WrongUsageException();
         }
         this.user = user;
@@ -36,6 +38,7 @@ public class TFS extends Loggable {
 
     public TFS with(String password) {
         if (user == null) {
+            log.error("Cannot connect without username for login!");
             throw new WrongUsageException();
         }
         System.setProperty(
@@ -48,6 +51,7 @@ public class TFS extends Loggable {
 
     public VCSConnection getConnection() {
         if (this.tpc == null) {
+            log.error("Cannot connect without valid TFSTeamProjectCollection object!");
             throw new WrongUsageException();
         }
         return new TFSVCSConnection(this.tpc);
@@ -69,7 +73,7 @@ public class TFS extends Loggable {
             try {
                 httpProxyURI = new URI(proxyUrl);
             } catch (URISyntaxException e) {
-                // Do Nothing
+                Logger.getLogger(TFS.class).warn("proxy URL invalid");
             }
         }
 
