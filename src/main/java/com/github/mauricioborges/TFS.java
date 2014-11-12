@@ -9,12 +9,16 @@ import com.microsoft.tfs.core.util.URIUtils;
 import org.apache.log4j.Logger;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Properties;
 
 public class TFS extends Loggable {
 
     private static final String NO_PROXY_SERVER = "";
+    public static final String COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY = "com.microsoft.tfs.jni.native.base-directory";
     private TFSTeamProjectCollection tpc;
     private String server;
     private String user;
@@ -41,12 +45,38 @@ public class TFS extends Loggable {
             log.error("Cannot connect without username for login!");
             throw new WrongUsageException();
         }
-        System.setProperty(
-                "com.microsoft.tfs.jni.native.base-directory",
-                "C:\\Users\\mauricio.silva\\Downloads\\TFS-SDK-11.0.0.1306\\TFS-SDK-11.0.0\\redist\\native");
+        loadNativeJniLibsDirectory();
 
         this.tpc = TFS.connectToTFS(user, password, NO_PROXY_SERVER, server);
         return this;
+    }
+
+    private void loadNativeJniLibsDirectory() {
+        //TODO: extract property loading
+        String jniBaseDirectory = null;
+        InputStream tfsPropertiesFile = TFS.class.getClassLoader().getResourceAsStream("tfs.properties");
+        if (tfsPropertiesFile==null){
+            setDefaultJniLibsDirectory();
+            return;
+        }
+        try {
+            Properties prop = new Properties();
+            prop.load(tfsPropertiesFile);
+            jniBaseDirectory=prop.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY);
+
+            System.setProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY,jniBaseDirectory);
+            if (System.getProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY)==null){
+                setDefaultJniLibsDirectory();
+            }
+        } catch (IOException e) {
+            log.info("cannot find tfs.properties. Using default JNI base directory");
+            setDefaultJniLibsDirectory();
+        }
+
+    }
+    private void setDefaultJniLibsDirectory(){
+        System.setProperty(COM_MICROSOFT_TFS_JNI_NATIVE_BASE_DIRECTORY, "native");
+
     }
 
     public VCSConnection getConnection() {

@@ -35,12 +35,17 @@ public class TestSpecification {
 
     @Test
     public void shouldReadRealFileAndPrintIt() throws IOException {
+        long start = System.currentTimeMillis();
         VCSConnection connection = new TFS().at(properties.getProperty("tfs.server")).as(properties.getProperty("tfs.user")).with(properties.getProperty("tfs.password")).getConnection();
         Repository repository = connection.toRepositoryRoot(properties.getProperty("tfs.path"));
         FileInputStream fileInputStream = repository.getFile(properties.getProperty("tfs.file"));
         assertNotNull(fileInputStream);
         printLinesFromFile(fileInputStream);
         connection.close();
+        long elapsedTimeMillis = System.currentTimeMillis()-start;
+        float elapsedTimeSec = elapsedTimeMillis/1000F;
+        System.out.println(elapsedTimeMillis);
+        System.out.println(elapsedTimeSec);
     }
 
     private void printLinesFromFile(FileInputStream fileInputStream) throws IOException {
@@ -48,7 +53,7 @@ public class TestSpecification {
         String line = null;
         line = reader.readLine();
         while(line != null){
-            System.out.println(line);
+            //System.out.println(line);
             line = reader.readLine();
         }
     }
